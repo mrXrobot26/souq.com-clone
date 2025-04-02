@@ -2,9 +2,6 @@ const Category = require('../models/categoryModel');
 const slugify = require('slugify');
 const asyncHandler = require('express-async-handler')
 
-
-
-
 //  @desc   Get Category by id
 //  @route  GET /api/v1/categories/id
 //  @access public
@@ -21,7 +18,6 @@ const getCategoryById = asyncHandler(async (req, res)=>{
         data: category
     })
 })
-
 
 //  @desc   Get All Categories
 //  @route  GET /api/v1/categories
@@ -72,4 +68,23 @@ const updateCategory = asyncHandler(async(req, res) => {
     })
 })
 
-module.exports = {createCategory , getCategories, getCategoryById , updateCategory};
+//  @desc   Delete Category by id
+//  @route  DELETE /api/v1/categories/:id
+//  @access Private
+const deleteCategoryById = asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    const category = await Category.findByIdAndDelete(id);
+    if (category === null) {
+        res.status(404).json({
+            status: 'Not Found',
+        });
+    } else {
+        res.status(200).json({
+            status: 'success',
+            message: 'Category deleted successfully',
+            deletedData :category
+        });
+    }
+});
+
+module.exports = { createCategory, getCategories, getCategoryById, updateCategory, deleteCategoryById };
