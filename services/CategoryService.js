@@ -1,14 +1,20 @@
-const CategoryModel = require('../models/categoryModel')
-const AddCategory = async (req, res) => {
-    try {
-        const nameFromReq = req.body.name;
-        const newCategory = new CategoryModel({ name: nameFromReq });
-        const savedCategory = await newCategory.save();
-        res.status(201).json(savedCategory);
-    } catch (err) {
-        console.error("Error saving category:", err);
-        res.status(500).json({ error: "Failed to save category" });
-    }
-};
+const CategoryModel = require('../models/categoryModel');
+const slugify = require('slugify');
 
+const AddCategory = async (req, res) => {
+    const nameFromReq = req.body.name;
+    await CategoryModel.create({
+        name: nameFromReq,
+        slag: slugify(nameFromReq)
+    })
+    .then( category => res.status(201).json({
+        status: 'success',
+        data: category
+    }))
+    .catch(err => res.status(500).json({
+        status: 'error',
+        message: err.message,
+        code: err.code
+    }))
+};
 module.exports = AddCategory;

@@ -11,11 +11,13 @@ const CategorySchema = Schema({
     } ,
     // Category Name A and B => a-and-b this is Slag
     slag: {
+        type: String,  // Missing type was causing the error
         required: [true, 'Slag Required'],
         minLength: [3, 'Min Length of Category Must be 3'],
         maxLength: [32, 'Max Length of Category Must be 32'],
         unique: [true, 'Category name must be unique']
-    }
+    },
+    image : String
 },{
     timestamps: true // Adds createdAt and updatedAt fields automatically
 }
