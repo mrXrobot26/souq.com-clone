@@ -20,8 +20,7 @@ const CategorySchema = Schema({
     image : String
 },{
     timestamps: true // Adds createdAt and updatedAt fields automatically
-}
-)
+})
 
 //modeling
 const CategoryModel = mongoose.model('category' , CategorySchema)

@@ -2,13 +2,38 @@ const CategoryModel = require('../models/categoryModel');
 const slugify = require('slugify');
 const asyncHandler = require('express-async-handler')
 
+
+
+
+//  @desc   Get Category by id
+//  @route  GET /api/v1/categories/id
+//  @access public
+const getCategoryById = asyncHandler(async (req, res)=>{
+    const {id} = req.params;
+    const category = await CategoryModel.findById(id);
+    if(category===null){
+        res.status(404).json({
+            status : 'Not Found',
+        })
+    }
+    res.status(201).json({
+        status : 'success',
+        data: category
+    })
+})
+
+
 //  @desc   Get All Categories
 //  @route  GET /api/v1/categories
 //  @access public
 const getCategories = asyncHandler(async (req , res)=>{
-    const categories = await CategoryModel.find({})
+    const page = parseInt(req.query.page);
+    const limit = parseInt(req.query.limit);
+    const skip = (page -1) * limit
+    const categories = await CategoryModel.find({}).skip(skip).limit(limit)
     res.status(201).json({
-        status: 'success',
+        status : 'success',
+        Page : page, 
         results : categories.length,
         data: categories
     })
@@ -30,4 +55,4 @@ const createCategory = asyncHandler(async (req, res) => {
 });
 
 
-module.exports = {createCategory , getCategories};
+module.exports = {createCategory , getCategories, getCategoryById};
