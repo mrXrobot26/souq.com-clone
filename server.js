@@ -19,6 +19,7 @@ dbConnect();
 app.use(express.json());
 
 if (process.env.NODE_ENV === 'development') {
+    console.log('======================================');
     console.log(`Mode: ${process.env.NODE_ENV}`);
     app.use(morgan('dev'));
     console.log('======================================');
@@ -44,5 +45,17 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`App running on port: ${PORT}`);
 });
+
+
+//Event => this event will call when error happen outside express like db conaction this event will do call back funcation when it call
+// Listen for unhandled promise rejections (e.g., database connection failure)
+process.on('unhandledRejection' , (err) => {
+    console.error(`UnhandledRejection Errors : ${err.name} | ${err.message} `)
+    // Gracefully shut down the server => Closes the server gracefully to prevent inconsistent states.
+    Server.close(()=>{
+        console.error()
+        process.exit(1)
+    })
+})
 
 module.exports = app; // Export for testing

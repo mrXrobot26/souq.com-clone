@@ -1,69 +1,131 @@
 const Category = require('../../models/categoryModel');
 const slugify = require('slugify');
-const APIError = require('../../utils/APIError');
 
 const getCategoryById = async (id) => {
-    const categoryFromDb = await Category.findById(id);
-    if (!categoryFromDb) {
-        throw new APIError('Category not found', 404);
-    }
+    try {
+        const categoryFromDb = await Category.findById(id);
+        if (!categoryFromDb) {
+            return {
+                success: false,
+                message: 'Category not found'
+            };
+        }
 
-    return categoryFromDb;
+        return {
+            success: true,
+            data: categoryFromDb
+        };
+    } catch (error) {
+        return {
+            success: false,
+            message: error.message
+        };
+    }
 };
 
 const getCategories = async (page = 1, limit = 10) => {
-    const skip = (page - 1) * limit;
-    const count = await Category.countDocuments();
-    const categoriesFromDb = await Category.find({}).skip(skip).limit(limit);
-    
-    return {
-        results: categoriesFromDb.length,
-        totalCount: count,
-        totalPages: Math.ceil(count / limit),
-        currentPage: page,
-        data: categoriesFromDb
-    };
+    try {
+        const skip = (page - 1) * limit;
+        const count = await Category.countDocuments();
+        const categoriesFromDb = await Category.find({}).skip(skip).limit(limit);
+        
+        return {
+            success: true,
+            results: categoriesFromDb.length,
+            totalCount: count,
+            totalPages: Math.ceil(count / limit),
+            currentPage: page,
+            data: categoriesFromDb
+        };
+    } catch (error) {
+        return {
+            success: false,
+            message: error.message
+        };
+    }
 };
 
 const createCategory = async (nameFromController) => {
-    if (!nameFromController) {
-        throw new APIError('Category name is required', 400);
-    }
+    try {
+        if (!nameFromController) {
+            return {
+                success: false,
+                message: 'Category name is required'
+            };
+        }
 
-    const categoryToDb = await Category.create({
-        name: nameFromController,
-        slug: slugify(nameFromController) 
-    });
-    
-    return categoryToDb;
+        const categoryToDb = await Category.create({
+            name: nameFromController,
+            slug: slugify(nameFromController) 
+        });
+        
+        return {
+            success: true,
+            data: categoryToDb
+        };
+    } catch (error) {
+        return {
+            success: false,
+            message: error.message
+        };
+    }
 };
 
 const updateCategory = async (idFromController, nameFromController) => {
-    if (!nameFromController) {
-        throw new APIError('Category name is required', 400);
+    try {
+        if (!nameFromController) {
+            return {
+                success: false,
+                message: 'Category name is required'
+            };
+        }
+
+        const categoryFromDb = await Category.findOneAndUpdate(
+            { _id: idFromController },
+            { name: nameFromController, slug: slugify(nameFromController) }, // Fixed 'slag' to 'slug'
+            { new: true, runValidators: true }
+        );
+
+        if (!categoryFromDb) {
+            return {
+                success: false,
+                message: 'Category not found'
+            };
+        }
+
+        return {
+            success: true,
+            data: categoryFromDb
+        };
+    } catch (error) {
+        return {
+            success: false,
+            message: error.message
+        };
     }
-
-    const categoryFromDb = await Category.findOneAndUpdate(
-        { _id: idFromController },
-        { name: nameFromController, slug: slugify(nameFromController) },
-        { new: true, runValidators: true }
-    );
-
-    if (!categoryFromDb) {
-        throw new APIError('Category not found', 404);
-    }
-
-    return categoryFromDb;
 };
 
 const deleteCategoryById = async (idFromController) => {
-    const categoryFromDb = await Category.findByIdAndDelete(idFromController);
+    try {
+        const categoryFromDb = await Category.findByIdAndDelete(idFromController);
 
-    if (!categoryFromDb) {
-        throw new APIError('Category not found', 404);
+        if (!categoryFromDb) {
+            return {
+                success: false,
+                message: 'Category not found'
+            };
+        }
+
+        return {
+            success: true,
+            message: 'Category deleted successfully'
+        };
+    } catch (error) {
+        return {
+            success: false,
+            message: error.message
+        };
     }
-
-    return true;
 };
 
 module.exports = {
