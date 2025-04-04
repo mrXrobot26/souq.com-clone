@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-//schema 
+//schema
 const CategorySchema = Schema({
     name: {
         type: String,
@@ -9,8 +9,8 @@ const CategorySchema = Schema({
         maxLength: [32, 'Max Length of Category Must be 32'],
         unique: [true, 'Category name must be unique']
     } ,
-    // Category Name A and B => a-and-b this is Slag
-    slag: {
+    // Category Name A and B => a-and-b this is Slug
+    slug: {
         type: String,  // Missing type was causing the error
         required: [true, 'Slag Required'],
         minLength: [3, 'Min Length of Category Must be 3'],
@@ -21,6 +21,11 @@ const CategorySchema = Schema({
 },{
     timestamps: true // Adds createdAt and updatedAt fields automatically
 })
+
+
+// Add this before creating the model
+// CategorySchema.index({ slug: 1 });
+
 
 //modeling
 const CategoryModel = mongoose.model('category' , CategorySchema)

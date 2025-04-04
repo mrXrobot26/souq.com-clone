@@ -1,23 +1,24 @@
-const {getCategoryById , getCategories , createCategory,updateCategory,deleteCategoryById} = require('../services/controllerServices/CategoryService')
-const asyncHandler = require('express-async-handler')
+const { 
+    getCategoryById, 
+    getCategories, 
+    createCategory, 
+    updateCategory, 
+    deleteCategoryById 
+} = require('../services/controllerServices/CategoryService');
+const asyncHandler = require('express-async-handler');
 
 // @desc   Get Category by id
 // @route  GET /api/v1/categories/:id
 // @access public
-const getCategoryByIdController = asyncHandler (async(req,res) =>{
-    const {id} = req.params
-    const result = await getCategoryById(id)
-    if(!result.success){
-        return res.status(404).json({
-            status: 'fail',
-            message: result.message 
-        })
-    }
+const getCategoryByIdController = asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    const category = await getCategoryById(id);
+    
     res.status(200).json({
         status: 'success',
-        data: result.data
+        data: category
     });
-})
+});
 
 // @desc   Get All Categories
 // @route  GET /api/v1/categories
@@ -27,38 +28,26 @@ const getCategoriesController = asyncHandler(async (req, res) => {
     const limit = parseInt(req.query.limit) || 10;
     const result = await getCategories(page, limit);
 
-    if (!result.success) {
-        return res.status(400).json({
-            status: 'fail',
-            message: result.message
-        });
-    }
-
     res.status(200).json({
         status: 'success',
-        results : result.results,
+        results: result.results,
+        totalCount: result.totalCount,
+        totalPages: result.totalPages,
+        currentPage: result.currentPage,
         data: result.data
     });
 });
-
 
 // @desc   Create a new Category
 // @route  POST /api/v1/categories
 // @access public
 const createCategoryController = asyncHandler(async (req, res) => {
-    const nameFromReq = req.body.name;
-    const result = await createCategory(nameFromReq);
-
-    if (!result.success) {
-        return res.status(400).json({
-            status: 'fail',
-            message: result.message
-        });
-    }
+    const { name } = req.body;
+    const category = await createCategory(name);
 
     res.status(201).json({
         status: 'success',
-        data: result.data
+        data: category
     });
 });
 
@@ -68,33 +57,20 @@ const createCategoryController = asyncHandler(async (req, res) => {
 const updateCategoryController = asyncHandler(async (req, res) => {
     const { id } = req.params;
     const { name } = req.body;
-
-    const result = await updateCategory(id, name);
-
-    if (!result.success) {
-        return res.status(400).json({
-            status: 'fail',
-            message: result.message
-        });
-    }
+    const category = await updateCategory(id, name);
 
     res.status(200).json({
         status: 'success',
-        data: result.data
+        data: category
     });
 });
 
-
+// @desc   Delete Category by id
+// @route  DELETE /api/v1/categories/:id
+// @access Private
 const deleteCategoryController = asyncHandler(async (req, res) => {
     const { id } = req.params;
-    const result = await deleteCategoryById(id);
-
-    if (!result.success) {
-        return res.status(400).json({
-            status: 'fail',
-            message: result.message
-        });
-    }
+    await deleteCategoryById(id);
 
     res.status(200).json({
         status: 'success',
@@ -102,11 +78,10 @@ const deleteCategoryController = asyncHandler(async (req, res) => {
     });
 });
 
-
-module.exports= {
+module.exports = {
     getCategoryByIdController,
     getCategoriesController,
     createCategoryController,
     updateCategoryController,
     deleteCategoryController
-}
+};

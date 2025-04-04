@@ -1,120 +1,70 @@
 const Category = require('../../models/categoryModel');
 const slugify = require('slugify');
+const APIError = require('../../utils/APIError');
 
 const getCategoryById = async (id) => {
-    try {
-        const categoryFromDb = await Category.findById(id);
-        if (!categoryFromDb) {
-            return {
-                success: false,
-                message: 'Category not found'
-            };
-        }
-
-        return {
-            success: true,
-            data: categoryFromDb
-        };
-    } catch (error) {
-        return {
-            success: false,
-            message: 'An error occurred',
-            error: error.message
-        };
+    const categoryFromDb = await Category.findById(id);
+    if (!categoryFromDb) {
+        throw new APIError('Category not found', 404);
     }
+
+    return categoryFromDb;
 };
 
 const getCategories = async (page = 1, limit = 10) => {
-    try {
-        const skip = (page - 1) * limit;
-        const categoriesFromDb = await Category.find({}).skip(skip).limit(limit);
-        return {
-            success: true,
-            results : categoriesFromDb.length,
-            data: categoriesFromDb
-        };
-    } catch (error) {
-        return {
-            success: false,
-            message: 'An error occurred',
-            error: error.message
-        };
-    }
+    const skip = (page - 1) * limit;
+    const count = await Category.countDocuments();
+    const categoriesFromDb = await Category.find({}).skip(skip).limit(limit);
+    
+    return {
+        results: categoriesFromDb.length,
+        totalCount: count,
+        totalPages: Math.ceil(count / limit),
+        currentPage: page,
+        data: categoriesFromDb
+    };
 };
 
 const createCategory = async (nameFromController) => {
-    try {
-        const categoryToDb = await Category.create({
-            name: nameFromController,
-            slag: slugify(nameFromController)
-        });
-        return {
-            success: true,
-            data: categoryToDb
-        };
-    } catch (error) {
-        return {
-            success: false,
-            message: 'An error occurred',
-            error: error.message
-        };
+    if (!nameFromController) {
+        throw new APIError('Category name is required', 400);
     }
+
+    const categoryToDb = await Category.create({
+        name: nameFromController,
+        slug: slugify(nameFromController) 
+    });
+    
+    return categoryToDb;
 };
+
 const updateCategory = async (idFromController, nameFromController) => {
-    try {
-        const categoryFromDb = await Category.findOneAndUpdate(
-            { _id: idFromController },
-            { name: nameFromController, slag: slugify(nameFromController) },
-            { new: true }
-        );
-
-        if (!categoryFromDb) {
-            return {
-                success: false,
-                message: 'Category not found'
-            };
-        }
-
-        return {
-            success: true,
-            data: categoryFromDb
-        };
-    } catch (error) {
-        return {
-            success: false,
-            message: 'An error occurred',
-            error: error.message
-        };
+    if (!nameFromController) {
+        throw new APIError('Category name is required', 400);
     }
+
+    const categoryFromDb = await Category.findOneAndUpdate(
+        { _id: idFromController },
+        { name: nameFromController, slug: slugify(nameFromController) },
+        { new: true, runValidators: true }
+    );
+
+    if (!categoryFromDb) {
+        throw new APIError('Category not found', 404);
+    }
+
+    return categoryFromDb;
 };
 
 const deleteCategoryById = async (idFromController) => {
-    try {
-        const categoryFromDb = await Category.findByIdAndDelete(idFromController);
+    const categoryFromDb = await Category.findByIdAndDelete(idFromController);
 
-        if (!categoryFromDb) {
-            return {
-                success: false,
-                message: 'Category not found'
-            };
-        }
-
-        return {
-            success: true,
-            message: 'Category deleted successfully'
-        };
-    } catch (error) {
-        return {
-            success: false,
-            message: 'An error occurred',
-            error: error.message
-        };
+    if (!categoryFromDb) {
+        throw new APIError('Category not found', 404);
     }
+
+    return true;
 };
-
-
-
-
 
 module.exports = {
     getCategoryById,
@@ -122,5 +72,4 @@ module.exports = {
     createCategory,
     updateCategory,
     deleteCategoryById
-}
-
+};
