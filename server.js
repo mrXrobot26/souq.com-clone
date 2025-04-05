@@ -29,7 +29,7 @@ if (process.env.NODE_ENV === 'development') {
 app.use('/api/v1/categories', categoryRouter);
 
 // if the route you send is not found
-app.use((req, res, next) => {
+app.all(/(.*)/,(req, res, next) => {
     // const err = new Error(`Can't find ${req.originalUrl} on this server`);
     // err.status = 404;
     // next(err);
@@ -47,15 +47,16 @@ app.listen(PORT, () => {
 });
 
 
-//Event => this event will call when error happen outside express like db conaction this event will do call back funcation when it call
+//Event => this event will call when error happen outside express like db connection this event will do callback function when it call
 // Listen for unhandled promise rejections (e.g., database connection failure)
-process.on('unhandledRejection' , (err) => {
-    console.error(`UnhandledRejection Errors : ${err.name} | ${err.message} `)
-    // Gracefully shut down the server => Closes the server gracefully to prevent inconsistent states.
-    Server.close(()=>{
-        console.error()
-        process.exit(1)
-    })
-})
+process.on('unhandledRejection', (err) => {
+    console.error(`UnhandledRejection Errors: ${err.name} | ${err.message}`);
+    // Gracefully shut down the server => Closes the server gracefully to prevent inconsistent states. If there are requests in process, the server will not close until they finish.
+    server.close(() => {
+        console.error('Server shutting down due to unhandled rejection.');
+        process.exit(1);
+    });
+});
+
 
 module.exports = app; // Export for testing

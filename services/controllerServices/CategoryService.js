@@ -1,14 +1,12 @@
 const Category = require('../../models/categoryModel');
 const slugify = require('slugify');
+const APIError = require('../../utils/APIError');
 
 const getCategoryById = async (id) => {
     try {
         const categoryFromDb = await Category.findById(id);
         if (!categoryFromDb) {
-            return {
-                success: false,
-                message: 'Category not found'
-            };
+            throw new APIError('Category not found', 404);
         }
 
         return {
@@ -16,10 +14,10 @@ const getCategoryById = async (id) => {
             data: categoryFromDb
         };
     } catch (error) {
-        return {
-            success: false,
-            message: error.message
-        };
+        if (error instanceof APIError) {
+            throw error;
+        }
+        throw new APIError(error.message, 500);
     }
 };
 
@@ -38,20 +36,14 @@ const getCategories = async (page = 1, limit = 10) => {
             data: categoriesFromDb
         };
     } catch (error) {
-        return {
-            success: false,
-            message: error.message
-        };
+        throw new APIError(error.message, 500);
     }
 };
 
 const createCategory = async (nameFromController) => {
     try {
         if (!nameFromController) {
-            return {
-                success: false,
-                message: 'Category name is required'
-            };
+            throw new APIError('Category name is required', 400);
         }
 
         const categoryToDb = await Category.create({
@@ -64,33 +56,30 @@ const createCategory = async (nameFromController) => {
             data: categoryToDb
         };
     } catch (error) {
-        return {
-            success: false,
-            message: error.message
-        };
+        if (error.code === 11000) {
+            throw new APIError('Category with this name already exists', 400);
+        }
+        if (error instanceof APIError) {
+            throw error;
+        }
+        throw new APIError(error.message, 500);
     }
 };
 
 const updateCategory = async (idFromController, nameFromController) => {
     try {
         if (!nameFromController) {
-            return {
-                success: false,
-                message: 'Category name is required'
-            };
+            throw new APIError('Category name is required', 400);
         }
 
         const categoryFromDb = await Category.findOneAndUpdate(
             { _id: idFromController },
-            { name: nameFromController, slug: slugify(nameFromController) }, // Fixed 'slag' to 'slug'
+            { name: nameFromController, slug: slugify(nameFromController) },
             { new: true, runValidators: true }
         );
 
         if (!categoryFromDb) {
-            return {
-                success: false,
-                message: 'Category not found'
-            };
+            throw new APIError('Category not found', 404);
         }
 
         return {
@@ -98,10 +87,13 @@ const updateCategory = async (idFromController, nameFromController) => {
             data: categoryFromDb
         };
     } catch (error) {
-        return {
-            success: false,
-            message: error.message
-        };
+        if (error.code === 11000) {
+            throw new APIError('Category with this name already exists', 400);
+        }
+        if (error instanceof APIError) {
+            throw error;
+        }
+        throw new APIError(error.message, 500);
     }
 };
 
@@ -110,10 +102,7 @@ const deleteCategoryById = async (idFromController) => {
         const categoryFromDb = await Category.findByIdAndDelete(idFromController);
 
         if (!categoryFromDb) {
-            return {
-                success: false,
-                message: 'Category not found'
-            };
+            throw new APIError('Category not found', 404);
         }
 
         return {
@@ -121,10 +110,10 @@ const deleteCategoryById = async (idFromController) => {
             message: 'Category deleted successfully'
         };
     } catch (error) {
-        return {
-            success: false,
-            message: error.message
-        };
+        if (error instanceof APIError) {
+            throw error;
+        }
+        throw new APIError(error.message, 500);
     }
 };
 
