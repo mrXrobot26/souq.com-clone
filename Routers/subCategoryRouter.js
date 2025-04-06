@@ -49,8 +49,5 @@ router.put("/:id", [validateUpdateSubCategory], updateSubCategoryController);
 // @access private
 router.delete("/:id", validateSubCategoryId, deleteSubCategoryController);
 
-// @desc   Get all categories with their subcategories
-// @route  GET /api/v1/subcategories/categories-with-subcategories
-// @access public
 
 module.exports = router;
