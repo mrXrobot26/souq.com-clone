@@ -35,9 +35,22 @@ const validatePagination = [
   validate,
 ];
 
+const validateUpdateSubCategory = [
+  param("id").isMongoId().withMessage("Invalid SubCategory ID --EV"),
+  body("name")
+    .notEmpty()
+    .withMessage("SubCategory name is required --EV")
+    .trim()
+    .isLength({ min: 3, max: 50 })
+    .withMessage("SubCategory name must be between 3 and 50 characters --EV"),
+  body("categoryId").isMongoId().withMessage("Invalid Category ID --EV"),
+  validate,
+];
+
 module.exports = {
   validateSubCategoryId,
   validateCategoryId,
   validateCreateSubCategory,
   validatePagination,
+  validateUpdateSubCategory,
 };

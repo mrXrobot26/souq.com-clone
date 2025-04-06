@@ -113,8 +113,72 @@ const createSubCategory = async (
   }
 };
 
+const updateSubCategory = async (idFromController, nameFromController, categoryIdFromController) => {
+  try {
+    if (!nameFromController) {
+      throw new APIError("SubCategory name is required", 400);
+    }
+
+    const subCategoryFromDb = await subCategory.findOneAndUpdate(
+      { _id: idFromController },
+      { 
+        name: nameFromController, 
+        slug: slugify(nameFromController),
+        category: categoryIdFromController
+      },
+      { new: true, runValidators: true }
+    ).populate("category");
+
+    if (!subCategoryFromDb) {
+      throw new APIError("SubCategory not found", 404);
+    }
+
+    return {
+      success: true,
+      data: subCategoryFromDb
+    };
+  } catch (error) {
+    if (error.code === 11000) {
+      throw new APIError("SubCategory with this name already exists", 400);
+    }
+    if (error instanceof APIError) {
+      throw error;
+    }
+    throw new APIError(
+      error.message || "An error occurred while updating the subcategory",
+      500
+    );
+  }
+};
+
+const deleteSubCategory = async (idFromController) => {
+  try {
+    const subCategoryFromDb = await subCategory.findByIdAndDelete(idFromController);
+
+    if (!subCategoryFromDb) {
+      throw new APIError("SubCategory not found", 404);
+    }
+
+    return {
+      success: true,
+      message: "SubCategory deleted successfully"
+    };
+  } catch (error) {
+    if (error instanceof APIError) {
+      throw error;
+    }
+    throw new APIError(
+      error.message || "An error occurred while deleting the subcategory",
+      500
+    );
+  }
+};
+
+
 module.exports = {
   getSpacificSubCategory,
   getSpacificSubCategories,
   createSubCategory,
+  updateSubCategory,
+  deleteSubCategory,
 };

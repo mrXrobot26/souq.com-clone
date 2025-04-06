@@ -3,6 +3,8 @@ const {
   getSpacificSubCategory,
   getSpacificSubCategories,
   createSubCategory,
+  updateSubCategory,
+  deleteSubCategory,
 } = require("../services/controllerServices/subCategoryService");
 
 const getSpacificSubCategoryController = AsyncHandler(async (req, res) => {
@@ -41,8 +43,32 @@ const createSubCategoryController = AsyncHandler(async (req, res) => {
   });
 });
 
+const updateSubCategoryController = AsyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const { name, categoryId } = req.body;
+
+  const result = await updateSubCategory(id, name, categoryId);
+  return res.status(200).json({
+    status: "success",
+    data: result.data,
+  });
+});
+
+const deleteSubCategoryController = AsyncHandler(async (req, res) => {
+  const { id } = req.params;
+  await deleteSubCategory(id);
+
+  return res.status(200).json({
+    status: "success",
+    message: "SubCategory deleted successfully",
+  });
+});
+
+
 module.exports = {
   getSpacificSubCategoryController,
   getSpacificSubCategoriesController,
   createSubCategoryController,
+  updateSubCategoryController,
+  deleteSubCategoryController,
 };
