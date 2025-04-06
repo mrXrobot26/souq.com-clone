@@ -1,12 +1,17 @@
-const { param, body, query } = require("express-validator");
+const { param } = require("express-validator");
 const { validate } = require("../../middlewares/validationMiddleware");
 
-const validateMongoId = [
-  param("id").isMongoId().withMessage("Invalid ID format --EV"),
+const validateSubCategoryId = [
+  param("id").isMongoId().withMessage("Invalid SubCategory ID --EV"),
   validate,
 ];
 
+const validateCategoryId = [
+  param("categoryId").isMongoId().withMessage("Invalid Category ID --EV"),
+  validate,
+];
 
 module.exports = {
-    validateMongoId,
-}
+  validateSubCategoryId,
+  validateCategoryId
+};

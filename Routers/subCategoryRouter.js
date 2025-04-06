@@ -1,11 +1,19 @@
 const express = require("express");
 const {
   getSpacificSubCategoryController,
+  getSpacificSubCategoriesController,
 } = require("../controllers/subCategoryController");
+const {
+  validateSubCategoryId,
+  validateCategoryId,
+} = require("../utils/validator/subCategoryValidator");
 
-const {validateMongoId} = require('../utils/validator/subCategoryValidator')
 const router = express.Router();
 
-router.get("/:id",validateMongoId , getSpacificSubCategoryController);
-
-module.exports = router
+router.get("/:id", validateSubCategoryId, getSpacificSubCategoryController);
+router.get(
+  "/category/:categoryId",
+  validateCategoryId,
+  getSpacificSubCategoriesController
+);
+module.exports = router;
