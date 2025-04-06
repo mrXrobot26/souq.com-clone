@@ -1,3 +1,4 @@
+const { default: slugify } = require("slugify");
 const subCategory = require("../../models/subCategoryModel");
 const APIError = require("../../utils/APIError");
 
@@ -72,7 +73,48 @@ const getSpacificSubCategories = async (
   }
 };
 
+const createSubCategory = async (
+  nameFromController,
+  categoryIdFromController
+) => {
+  try {
+    if (!nameFromController) {
+      throw new APIError("Name is required to create a subcategory", 400);
+    }
+    if (!categoryIdFromController) {
+      throw new APIError(
+        "Category ID is required to create a subcategory",
+        400
+      );
+    }
+
+    const subCategoriesToDb = await subCategory.create({
+      name: nameFromController,
+      slug: slugify(nameFromController),
+      category: categoryIdFromController,
+    });
+
+    const populatedSubCategory = await subCategory
+      .findById(subCategoriesToDb._id)
+      .populate("category");
+
+    return {
+      success: true,
+      data: populatedSubCategory,
+    };
+  } catch (error) {
+    if (error instanceof APIError) {
+      throw error;
+    }
+    throw new APIError(
+      error.message || "An error occurred while creating the subcategory",
+      500
+    );
+  }
+};
+
 module.exports = {
   getSpacificSubCategory,
   getSpacificSubCategories,
+  createSubCategory,
 };

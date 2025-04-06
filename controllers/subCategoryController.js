@@ -2,6 +2,7 @@ const AsyncHandler = require("express-async-handler");
 const {
   getSpacificSubCategory,
   getSpacificSubCategories,
+  createSubCategory,
 } = require("../services/controllerServices/subCategoryService");
 
 const getSpacificSubCategoryController = AsyncHandler(async (req, res) => {
@@ -29,7 +30,19 @@ const getSpacificSubCategoriesController = AsyncHandler(async (req, res) => {
   });
 });
 
+const createSubCategoryController = AsyncHandler(async (req, res) => {
+  const name = req.body.name;
+  const categoryId = req.body.categoryId;
+
+  const result = await createSubCategory(name, categoryId);
+  return res.status(201).json({
+    status: "success",
+    data: result.data,
+  });
+});
+
 module.exports = {
   getSpacificSubCategoryController,
   getSpacificSubCategoriesController,
+  createSubCategoryController,
 };

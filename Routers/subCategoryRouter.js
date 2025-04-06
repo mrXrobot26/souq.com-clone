@@ -2,6 +2,7 @@ const express = require("express");
 const {
   getSpacificSubCategoryController,
   getSpacificSubCategoriesController,
+  createSubCategoryController,
 } = require("../controllers/subCategoryController");
 const {
   validateSubCategoryId,
@@ -16,4 +17,6 @@ router.get(
   validateCategoryId,
   getSpacificSubCategoriesController
 );
+
+router.post("/", validateCreateSubCategory, createSubCategoryController);
 module.exports = router;
