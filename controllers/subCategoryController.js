@@ -1,4 +1,5 @@
 const AsyncHandler = require("express-async-handler");
+const APIResponse = require("../utils/apiResponse");
 const {
   getSpacificSubCategory,
   getSpacificSubCategories,
@@ -10,10 +11,7 @@ const {
 const getSpacificSubCategoryController = AsyncHandler(async (req, res) => {
   const { id } = req.params; // Changed from subCategoryId to id to match route parameter
   const result = await getSpacificSubCategory(id);
-  return res.status(200).json({
-    status: "success",
-    data: result.data,
-  });
+  APIResponse.send(res, APIResponse.success(result));
 });
 
 const getSpacificSubCategoriesController = AsyncHandler(async (req, res) => {
@@ -21,15 +19,14 @@ const getSpacificSubCategoriesController = AsyncHandler(async (req, res) => {
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 10;
   const result = await getSpacificSubCategories(page, limit, categoryId);
-
-  res.status(200).json({
-    status: "success",
+  const responseData = {
     results: result.results,
     totalCount: result.totalCount,
     totalPages: result.totalPages,
     currentPage: result.currentPage,
     data: result.data,
-  });
+  };
+  APIResponse.send(res, APIResponse.success(responseData));
 });
 
 const createSubCategoryController = AsyncHandler(async (req, res) => {
@@ -37,10 +34,7 @@ const createSubCategoryController = AsyncHandler(async (req, res) => {
   const categoryId = req.body.categoryId;
 
   const result = await createSubCategory(name, categoryId);
-  return res.status(201).json({
-    status: "success",
-    data: result.data,
-  });
+  APIResponse.send(res, APIResponse.success(result.data, 201, 'SubCategory created successfully'))
 });
 
 const updateSubCategoryController = AsyncHandler(async (req, res) => {
@@ -48,22 +42,16 @@ const updateSubCategoryController = AsyncHandler(async (req, res) => {
   const { name, categoryId } = req.body;
 
   const result = await updateSubCategory(id, name, categoryId);
-  return res.status(200).json({
-    status: "success",
-    data: result.data,
-  });
+  APIResponse.send(res,APIResponse.success(result.data,200, "SubCategory updated successfully"))
+
 });
 
 const deleteSubCategoryController = AsyncHandler(async (req, res) => {
   const { id } = req.params;
   await deleteSubCategory(id);
-
-  return res.status(200).json({
-    status: "success",
-    message: "SubCategory deleted successfully",
-  });
+  return APIResponse.send(res,APIResponse.success(null, 200, "SubCategory deleted successfully")
+  );
 });
-
 
 module.exports = {
   getSpacificSubCategoryController,
