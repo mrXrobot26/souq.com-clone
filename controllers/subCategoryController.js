@@ -1,5 +1,5 @@
 const AsyncHandler = require("express-async-handler");
-const APIResponse = require("../utils/apiResponse");
+const APIResponse = require("../utils/APIResponse");
 const {
   getSpacificSubCategory,
   getSpacificSubCategories,

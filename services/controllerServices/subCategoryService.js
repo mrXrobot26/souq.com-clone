@@ -6,7 +6,7 @@ const getSpacificSubCategory = async (subCategoryIdFromController) => {
   try {
     const subCategoryFromDb = await subCategory
       .findById(subCategoryIdFromController)
-      .populate("category");
+      .populate({ path: "category", select: "name" });
     if (!subCategoryFromDb) {
       throw new APIError("SubCategory not found", 404);
     }
@@ -50,7 +50,7 @@ const getSpacificSubCategories = async (
     const count = await subCategory.countDocuments(filter);
     const subCategoriesFromDb = await subCategory
       .find(filter)
-      .populate("category")
+      .populate({ path: "category", select: "name" })
       .skip(skip)
       .limit(limit);
 
