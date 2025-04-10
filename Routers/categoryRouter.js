@@ -1,5 +1,5 @@
 const express = require('express');
-const APIError = require('../utils/APIError');
+const subcategoriesRoute = require('./subCategoryRouter')
 const {
     validateMongoId,
     validateCategory,
@@ -15,6 +15,7 @@ const {
 } = require('../controllers/categoryController');
 
 
+router.use('/:categoryId/subcategories',subcategoriesRoute)
 
 
 

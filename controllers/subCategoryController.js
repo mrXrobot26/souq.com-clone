@@ -31,7 +31,7 @@ const getSpacificSubCategoriesController = AsyncHandler(async (req, res) => {
 
 const createSubCategoryController = AsyncHandler(async (req, res) => {
   const name = req.body.name;
-  const categoryId = req.body.categoryId;
+  const {categoryId} = req.params;
 
   const result = await createSubCategory(name, categoryId);
   APIResponse.send(res, APIResponse.success(result.data, 201, 'SubCategory created successfully'))

@@ -14,7 +14,9 @@ const {
   validateUpdateSubCategory,
 } = require("../utils/validator/subCategoryValidator");
 
-const router = express.Router();
+const router = express.Router({mergeParams : true});
+
+
 
 // @desc   Get SubCategory by id
 // @route  GET /api/v1/subcategories/:id
@@ -26,16 +28,16 @@ router.get(
 );
 
 // @desc   Get SubCategories by category id
-// @route  GET /api/v1/subcategories/category/:categoryId
+// @route  GET /api/v1/category/:categoryId/subCategories
 // @access public
 router.get(
-  "/category/:categoryId",
+  "/",
   validateCategoryId,
   getSpacificSubCategoriesController
 );
 
 // @desc   Create a new SubCategory
-// @route  POST /api/v1/subcategories
+// @route  POST /api/v1/category/:categoryId/subCategories
 // @access private
 router.post("/", [validateCreateSubCategory], createSubCategoryController);
 

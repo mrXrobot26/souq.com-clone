@@ -17,7 +17,7 @@ const validateCreateSubCategory = [
     .trim()
     .isLength({ min: 3, max: 50 })
     .withMessage("SubCategory name must be between 3 and 50 characters --EV"),
-  body("categoryId").isMongoId().withMessage("Invalid Category ID --EV"),
+  param("categoryId").isMongoId().withMessage("Invalid Category ID --EV"),
   validate,
 ];
 
