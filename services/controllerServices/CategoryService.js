@@ -10,7 +10,6 @@ const getCategoryById = async (id) => {
         }
 
         return {
-            success: true,
             data: categoryFromDb
         };
     } catch (error) {
@@ -28,7 +27,6 @@ const getCategories = async (page = 1, limit = 10) => {
         const categoriesFromDb = await Category.find({}).skip(skip).limit(limit);
         
         return {
-            success: true,
             results: categoriesFromDb.length,
             totalCount: count,
             totalPages: Math.ceil(count / limit),
@@ -52,7 +50,6 @@ const createCategory = async (nameFromController) => {
         });
         
         return {
-            success: true,
             data: categoryToDb
         };
     } catch (error) {
@@ -83,7 +80,6 @@ const updateCategory = async (idFromController, nameFromController) => {
         }
 
         return {
-            success: true,
             data: categoryFromDb
         };
     } catch (error) {
@@ -106,7 +102,6 @@ const deleteCategoryById = async (idFromController) => {
         }
 
         return {
-            success: true,
             message: 'Category deleted successfully'
         };
     } catch (error) {

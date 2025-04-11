@@ -11,7 +11,6 @@ const getSpacificSubCategory = async (subCategoryIdFromController) => {
       throw new APIError("SubCategory not found", 404);
     }
     return {
-      success: true,
       data: subCategoryFromDb,
     };
   } catch (error) {
@@ -55,7 +54,6 @@ const getSpacificSubCategories = async (
       .limit(limit);
 
     return {
-      success: true,
       results: subCategoriesFromDb.length,
       totalCount: count,
       totalPages: Math.ceil(count / limit),
@@ -99,7 +97,6 @@ const createSubCategory = async (
       .populate("category");
 
     return {
-      success: true,
       data: populatedSubCategory,
     };
   } catch (error) {
@@ -134,7 +131,6 @@ const updateSubCategory = async (idFromController, nameFromController, categoryI
     }
 
     return {
-      success: true,
       data: subCategoryFromDb
     };
   } catch (error) {
@@ -160,7 +156,6 @@ const deleteSubCategory = async (idFromController) => {
     }
 
     return {
-      success: true,
       message: "SubCategory deleted successfully"
     };
   } catch (error) {

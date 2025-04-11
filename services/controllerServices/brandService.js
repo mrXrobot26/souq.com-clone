@@ -10,8 +10,7 @@ const createBrand = async (nameFromController) => {
   });
   if (!brandToDb) return new APIError("msg", 400);
   return {
-    status: true,
-    brand: brandToDb,
+    data: brandToDb,
   };
 };
 
