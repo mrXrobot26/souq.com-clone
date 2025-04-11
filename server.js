@@ -4,6 +4,7 @@ const morgan = require("morgan");
 const dbConnect = require("./config/database");
 const categoryRouter = require("./Routers/categoryRouter");
 const subCategoryRouter = require("./Routers/subCategoryRouter");
+const brandRouter = require("./Routers/brandRouter");
 const APIError = require("./utils/APIError");
 const globalError = require("./middlewares/gloablErrorHandlingMiddelware");
 
@@ -29,6 +30,7 @@ if (process.env.NODE_ENV === "development") {
 // Mount routes
 app.use("/api/v1/categories", categoryRouter);
 app.use("/api/v1/subcategories", subCategoryRouter);
+app.use("/api/v1/brands", brandRouter);
 
 // if the route you send is not found
 app.all(/(.*)/, (req, res, next) => {
