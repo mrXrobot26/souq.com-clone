@@ -3,19 +3,27 @@ const Brand = require("../../models/brandModel");
 const APIError = require("../../utils/APIError");
 
 const createBrand = async (nameFromController) => {
-  if (!nameFromController) return new APIError("msg", 400);
+  if (!nameFromController) return new APIError("Brand name is required", 400);
   const brandToDb = await Brand.create({
     name: nameFromController,
     slug: slugify(nameFromController),
   });
-  if (!brandToDb) return new APIError("msg", 400);
+  if (!brandToDb) return new APIError("Failed to create brand", 400);
   return {
     data: brandToDb,
   };
 };
 
-
+const getBrand = async (idFromController) => {
+  if (!idFromController) return new APIError("Brand Id is required", 400);
+  const brandFromDb = await Brand.findById(idFromController);
+  if (!brandFromDb) return new APIError("Brand Not Found", 404);
+  return {
+    data: brandFromDb,
+  };
+};
 
 module.exports = {
-    createBrand
-}
+  createBrand,
+  getBrand
+};
