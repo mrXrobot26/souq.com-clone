@@ -36,8 +36,23 @@ const getBrands = async (page = 1, limit = 10) => {
   };
 };
 
+const updateBrand = async (idFromController, nameFromController) => {
+  if (!nameFromController) {
+    throw new Error("Brand name is required");
+  }
+  const brand = await Brand.findOneAndUpdate(
+    { _id: idFromController },
+    { name: nameFromController, slug: slugify(nameFromController) },
+    { new: true, runValidators: true }
+  );
+  return {
+    data: brand,
+  };
+};
+
 module.exports = {
   createBrand,
   getBrand,
   getBrands,
+  updateBrand,
 };
