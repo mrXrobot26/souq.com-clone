@@ -7,11 +7,16 @@ const {
   updateBrandController,
   deleteBrandController,
 } = require("../controllers/brandController");
+const {
+  validateBrandId,
+  validateBrand,
+  validatePagination
+} = require("../utils/validator/brandValidator");
 
-router.post("/", createBrandController);
-router.get("/:id", getBrandController);
-router.get("/", getBrandsController);
-router.put("/:id", updateBrandController);
-router.delete("/:id", deleteBrandController);
+router.post("/", validateBrand, createBrandController);
+router.get("/:id", validateBrandId, getBrandController);
+router.get("/", validatePagination, getBrandsController);
+router.put("/:id", [...validateBrandId, ...validateBrand], updateBrandController);
+router.delete("/:id", validateBrandId, deleteBrandController);
 
 module.exports = router;
