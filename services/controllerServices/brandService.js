@@ -50,9 +50,32 @@ const updateBrand = async (idFromController, nameFromController) => {
   };
 };
 
+const deleteBrand = async (idFromController) => {
+  try {
+    if (!idFromController) {
+      throw new APIError('Brand Id is required', 400);
+    }
+    
+    const brand = await Brand.findByIdAndDelete(idFromController);
+    
+    if (!brand) {
+      throw new APIError('Brand not found', 404);
+    }
+    return {
+      
+    };
+  } catch (error) {
+    if (error instanceof APIError) {
+      throw error;
+    }
+    throw new APIError(error.message, 500);
+  }
+};
+
 module.exports = {
   createBrand,
   getBrand,
   getBrands,
   updateBrand,
+  deleteBrand,
 };
