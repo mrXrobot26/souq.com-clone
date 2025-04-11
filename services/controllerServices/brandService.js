@@ -23,7 +23,21 @@ const getBrand = async (idFromController) => {
   };
 };
 
+const getBrands = async (page = 1, limit = 10) => {
+  const skip = (page - 1) * limit;
+  const brandsFromDb = await Brand.find().skip(skip).limit(limit);
+  const count = await Brand.countDocuments();
+  return {
+    results: brandsFromDb.length,
+    totalCount: count,
+    totalPages: Math.ceil(count / limit),
+    currentPage: page,
+    data: brandsFromDb,
+  };
+};
+
 module.exports = {
   createBrand,
-  getBrand
+  getBrand,
+  getBrands,
 };
