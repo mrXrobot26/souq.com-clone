@@ -5,6 +5,7 @@ const dbConnect = require("./config/database");
 const categoryRouter = require("./Routers/categoryRouter");
 const subCategoryRouter = require("./Routers/subCategoryRouter");
 const brandRouter = require("./Routers/brandRouter");
+const productRouter = require("./Routers/productRouter");
 const APIError = require("./utils/APIError");
 const globalError = require("./middlewares/gloablErrorHandlingMiddelware");
 
@@ -31,6 +32,7 @@ if (process.env.NODE_ENV === "development") {
 app.use("/api/v1/categories", categoryRouter);
 app.use("/api/v1/subcategories", subCategoryRouter);
 app.use("/api/v1/brands", brandRouter);
+app.use("/api/v1/products", productRouter);
 
 // if the route you send is not found
 app.all(/(.*)/, (req, res, next) => {
@@ -45,7 +47,7 @@ app.use(globalError);
 
 // Start the server
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`App running on port: ${PORT}`);
 });
 

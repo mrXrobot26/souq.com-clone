@@ -16,7 +16,7 @@ const {
 router.post("/", validateBrand, createBrandController);
 router.get("/:id", validateBrandId, getBrandController);
 router.get("/", validatePagination, getBrandsController);
-router.put("/:id", [...validateBrandId, ...validateBrand], updateBrandController);
+router.put("/:id", validateBrandId, validateBrand, updateBrandController);
 router.delete("/:id", validateBrandId, deleteBrandController);
 
 module.exports = router;
