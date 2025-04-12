@@ -28,7 +28,7 @@ const CategorySchema = Schema({
 
 
 //modeling
-const CategoryModel = mongoose.model('category' , CategorySchema)
+const CategoryModel = mongoose.model('Category' , CategorySchema)
 // explain ↑↑↑↑↑↑
 // The new keyword is unnecessary when calling mongoose.model() because:
 // mongoose.model() is a factory function, not a constructor

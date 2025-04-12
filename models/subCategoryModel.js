@@ -18,7 +18,7 @@ const subCategorySchema = mongoose.Schema({
     //ref to category
     category :{
         type : mongoose.Schema.ObjectId,
-        ref :'category',
+        ref :'Category',
         required : [true ,"Category reference is required"]
     }
 }   
@@ -27,6 +27,6 @@ const subCategorySchema = mongoose.Schema({
     }
 )
 
-const subCategory = mongoose.model('subCategory' , subCategorySchema)
+const subCategory = mongoose.model('SubCategory' , subCategorySchema)
 
 module.exports = subCategory
