@@ -23,6 +23,6 @@ const brandSchema = Schema(
     timestamps: true,
   }
 );
-//                                 when i do ref i use 'brand'
-const brandModel = mongoose.model('brand', brandSchema)
-module.exports = brandModel
+//                                 when i do ref i use 'Brand'
+const brandModel = mongoose.model("Brand", brandSchema);
+module.exports = brandModel;

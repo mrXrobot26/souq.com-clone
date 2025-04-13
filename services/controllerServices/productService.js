@@ -6,13 +6,16 @@ const createProduct = async (req) => {
   try {
     req.body.slug = slugify(req.body.title);
     const product = await Product.create(req.body);
+    // Populate the product with category, subCategory and brand data
+    const populatedProduct = await Product.findById(product._id).populate([
+      { path: "category", select: "name" },
+      { path: "subCategory", select: "name" },
+      { path: "brand", select: "name" },
+    ]);
     return {
-      data: product,
+      data: populatedProduct,
     };
   } catch (error) {
-    if (error.code === 11000) {
-      throw new APIError("Product with this title already exists", 400);
-    }
     if (error instanceof APIError) {
       throw error;
     }
@@ -25,7 +28,11 @@ const getProduct = async (idFromController) => {
     if (!idFromController) {
       throw new APIError("Product id is required", 400);
     }
-    const product = await Product.findById(idFromController);
+    const product = await Product.findById(idFromController).populate([
+      { path: "category", select: "name" },
+      { path: "subCategory", select: "name" },
+      { path: "brand", select: "name" },
+    ]);
     if (!product) {
       throw new APIError("Product not found", 404);
     }
@@ -44,7 +51,14 @@ const getProducts = async (page = 1, limit = 10) => {
   try {
     const skip = (page - 1) * limit;
     const count = await Product.countDocuments();
-    const products = await Product.find().skip(skip).limit(limit);
+    const products = await Product.find()
+      .skip(skip)
+      .limit(limit)
+      .populate([
+        { path: "category", select: "name" },
+        { path: "subCategory", select: "name" },
+        { path: "brand", select: "name" },
+      ]);
 
     return {
       results: products.length,
@@ -72,7 +86,11 @@ const updateProduct = async (idFromController, req) => {
       {
         new: true,
       }
-    );
+    ).populate([
+      { path: "category", select: "name" },
+      { path: "subCategory", select: "name" },
+      { path: "brand", select: "name" },
+    ]);
     if (!product) {
       throw new APIError("Product not found", 404);
     }
