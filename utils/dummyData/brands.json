@@ -1,0 +1,32 @@
+[
+  {
+    "name": "Apple",
+    "slug": "apple",
+    "image": "apple.jpg"
+  },
+  {
+    "name": "Samsung",
+    "slug": "samsung",
+    "image": "samsung.jpg"
+  },
+  {
+    "name": "Nike",
+    "slug": "nike",
+    "image": "nike.jpg"
+  },
+  {
+    "name": "Adidas",
+    "slug": "adidas",
+    "image": "adidas.jpg"
+  },
+  {
+    "name": "Sony",
+    "slug": "sony",
+    "image": "sony.jpg"
+  },
+  {
+    "name": "LG",
+    "slug": "lg",
+    "image": "lg.jpg"
+  }
+]

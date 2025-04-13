@@ -1,0 +1,47 @@
+[
+  {
+    "_id": "67fbfaf63e460ed4f7fa784b",
+    "name": "Electronics",
+    "slug": "electronics",
+    "image": "electronics.jpg",
+    "createdAt": "2025-04-13T17:57:10.884+00:00",
+    "updatedAt": "2025-04-13T17:57:10.884+00:00",
+    "__v": 0
+  },
+  {
+    "_id": "67fbfaf63e460ed4f7fa784c",
+    "name": "Clothing",
+    "slug": "clothing",
+    "image": "clothing.jpg",
+    "createdAt": "2025-04-13T17:57:10.884+00:00",
+    "updatedAt": "2025-04-13T17:57:10.884+00:00",
+    "__v": 0
+  },
+  {
+    "_id": "67fbfaf63e460ed4f7fa784d",
+    "name": "Home & Kitchen",
+    "slug": "home-kitchen",
+    "image": "home-kitchen.jpg",
+    "createdAt": "2025-04-13T17:57:10.884+00:00",
+    "updatedAt": "2025-04-13T17:57:10.884+00:00",
+    "__v": 0
+  },
+  {
+    "_id": "67fbfaf63e460ed4f7fa784e",
+    "name": "Books",
+    "slug": "books",
+    "image": "books.jpg",
+    "createdAt": "2025-04-13T17:57:10.884+00:00",
+    "updatedAt": "2025-04-13T17:57:10.884+00:00",
+    "__v": 0
+  },
+  {
+    "_id": "67fbfaf63e460ed4f7fa784f",
+    "name": "Sports & Outdoors",
+    "slug": "sports-outdoors",
+    "image": "sports-outdoors.jpg",
+    "createdAt": "2025-04-13T17:57:10.884+00:00",
+    "updatedAt": "2025-04-13T17:57:10.884+00:00",
+    "__v": 0
+  }
+]

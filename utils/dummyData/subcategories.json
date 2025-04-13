@@ -1,0 +1,65 @@
+[
+  {
+    "_id": "67fbfb0aa32c67e3ca5398c1",
+    "name": "Smartphones",
+    "slug": "smartphones",
+    "category": "67fbfaba26aa66ad54bd3c47",
+    "createdAt": "2025-04-13T17:57:30.280+00:00",
+    "updatedAt": "2025-04-13T17:57:30.280+00:00",
+    "__v": 0
+  },
+  {
+    "_id": "67fbfb0aa32c67e3ca5398c2",
+    "name": "Laptops",
+    "slug": "laptops",
+    "category": "67fbfaba26aa66ad54bd3c47",
+    "createdAt": "2025-04-13T17:57:30.281+00:00",
+    "updatedAt": "2025-04-13T17:57:30.281+00:00",
+    "__v": 0
+  },
+  {
+    "_id": "67fbfb0aa32c67e3ca5398c3",
+    "name": "Men's Clothing",
+    "slug": "mens-clothing",
+    "category": "67fbfaba26aa66ad54bd3c48",
+    "createdAt": "2025-04-13T17:57:30.281+00:00",
+    "updatedAt": "2025-04-13T17:57:30.281+00:00",
+    "__v": 0
+  },
+  {
+    "_id": "67fbfb0aa32c67e3ca5398c4",
+    "name": "Women's Clothing",
+    "slug": "womens-clothing",
+    "category": "67fbfaba26aa66ad54bd3c48",
+    "createdAt": "2025-04-13T17:57:30.281+00:00",
+    "updatedAt": "2025-04-13T17:57:30.281+00:00",
+    "__v": 0
+  },
+  {
+    "_id": "67fbfbbcdbf719fa932f821c",
+    "name": "Kitchen Appliances",
+    "slug": "kitchen-appliances",
+    "category": "67fbfaf63e460ed4f7fa784d",
+    "createdAt": "2025-04-13T18:00:28.604+00:00",
+    "updatedAt": "2025-04-13T18:00:28.604+00:00",
+    "__v": 0
+  },
+  {
+    "_id": "67fbfb0aa32c67e3ca5398c6",
+    "name": "Fiction",
+    "slug": "fiction",
+    "category": "67fbfaba26aa66ad54bd3c4a",
+    "createdAt": "2025-04-13T17:57:30.281+00:00",
+    "updatedAt": "2025-04-13T17:57:30.281+00:00",
+    "__v": 0
+  },
+  {
+    "_id": "67fbfbbcdbf719fa932f821e",
+    "name": "Outdoor Gear",
+    "slug": "outdoor-gear",
+    "category": "67fbfaf63e460ed4f7fa784f",
+    "createdAt": "2025-04-13T18:00:28.604+00:00",
+    "updatedAt": "2025-04-13T18:00:28.604+00:00",
+    "__v": 0
+  }
+]
