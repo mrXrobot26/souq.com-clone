@@ -1,118 +1,94 @@
 const Category = require("../../models/categoryModel");
 const slugify = require("slugify");
 const APIError = require("../../utils/APIError");
+const asyncHandler = require("express-async-handler");
 
-const getCategoryById = async (id) => {
-  try {
-    const categoryFromDb = await Category.findById(id);
-    if (!categoryFromDb) {
-      throw new APIError("Category not found", 404);
-    }
-
-    return {
-      data: categoryFromDb,
-    };
-  } catch (error) {
-    if (error instanceof APIError) {
-      throw error;
-    }
-    throw new APIError(error.message, 500);
+// Helper function to handle common errors
+const handleErrors = (error) => {
+  if (error instanceof APIError) {
+    throw error;
   }
+  throw new APIError(error.message, 500);
 };
 
-const getCategories = async (req) => {
-  try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
-    const skip = (page - 1) * limit;
-    const count = await Category.countDocuments();
-    const categoriesFromDb = await Category.find({}).skip(skip).limit(limit);
-
-    return {
-      results: categoriesFromDb.length,
-      totalCount: count,
-      totalPages: Math.ceil(count / limit),
-      currentPage: page,
-      data: categoriesFromDb,
-    };
-  } catch (error) {
-    throw new APIError(error.message, 500);
+// Helper function to handle duplicate key errors
+const handleDuplicateKeyError = (error) => {
+  if (error.code === 11000) {
+    throw new APIError("Category with this name already exists", 400);
   }
+  handleErrors(error);
 };
 
-const createCategory = async (nameFromController) => {
-  try {
-    if (!nameFromController) {
-      throw new APIError("Category name is required", 400);
-    }
-
-    const categoryToDb = await Category.create({
-      name: nameFromController,
-      slug: slugify(nameFromController),
-    });
-
-    return {
-      data: categoryToDb,
-    };
-  } catch (error) {
-    if (error.code === 11000) {
-      throw new APIError("Category with this name already exists", 400);
-    }
-    if (error instanceof APIError) {
-      throw error;
-    }
-    throw new APIError(error.message, 500);
+const getCategoryById = asyncHandler(async (id) => {
+  const categoryFromDb = await Category.findById(id);
+  if (!categoryFromDb) {
+    throw new APIError("Category not found", 404);
   }
-};
 
-const updateCategory = async (idFromController, nameFromController) => {
-  try {
-    if (!nameFromController) {
-      throw new APIError("Category name is required", 400);
-    }
+  return {
+    data: categoryFromDb,
+  };
+});
 
-    const categoryFromDb = await Category.findOneAndUpdate(
-      { _id: idFromController },
-      { name: nameFromController, slug: slugify(nameFromController) },
-      { new: true, runValidators: true }
-    );
+const getCategories = asyncHandler(async (req) => {
+  const APIFeatures = require("../../utils/APIFeatures");
+  
+  // Initialize APIFeatures with Category model and request query
+  const features = new APIFeatures(Category.find(), req.query)
+    .filter()
+    .sort()
+    .limitFields()
+    .paginate()
+    .search(['name']);
+  
+  // Execute query
+  const categoriesFromDb = await features.query;
+  
+  // Get total count for pagination
+  const count = await Category.countDocuments(features.query.getFilter());
+  
+  // Return formatted response
+  return features.formatResponse(categoriesFromDb, count);
+});
 
-    if (!categoryFromDb) {
-      throw new APIError("Category not found", 404);
-    }
+const createCategory = asyncHandler(async (nameFromController) => {
+  const categoryToDb = await Category.create({
+    name: nameFromController,
+    slug: slugify(nameFromController),
+  });
 
-    return {
-      data: categoryFromDb,
-    };
-  } catch (error) {
-    if (error.code === 11000) {
-      throw new APIError("Category with this name already exists", 400);
-    }
-    if (error instanceof APIError) {
-      throw error;
-    }
-    throw new APIError(error.message, 500);
+  return {
+    data: categoryToDb,
+  };
+});
+
+const updateCategory = asyncHandler(async (idFromController, nameFromController) => {
+  const categoryFromDb = await Category.findOneAndUpdate(
+    { _id: idFromController },
+    { name: nameFromController, slug: slugify(nameFromController) },
+    { new: true, runValidators: true }
+  );
+
+  if (!categoryFromDb) {
+    throw new APIError("Category not found", 404);
   }
-};
 
-const deleteCategoryById = async (idFromController) => {
-  try {
-    const categoryFromDb = await Category.findByIdAndDelete(idFromController);
+  return {
+    data: categoryFromDb,
+  };
+});
 
-    if (!categoryFromDb) {
-      throw new APIError("Category not found", 404);
-    }
+const deleteCategoryById = asyncHandler(async (idFromController) => {
+  const categoryFromDb = await Category.findByIdAndDelete(idFromController);
 
-    return {
-      message: "Category deleted successfully",
-    };
-  } catch (error) {
-    if (error instanceof APIError) {
-      throw error;
-    }
-    throw new APIError(error.message, 500);
+  if (!categoryFromDb) {
+    throw new APIError("Category not found", 404);
   }
-};
+
+  return {
+    message: "Category deleted successfully",
+  };
+});
 
 module.exports = {
   getCategoryById,

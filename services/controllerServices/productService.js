@@ -1,146 +1,93 @@
 const Product = require("../../models/productModel");
 const slugify = require("slugify");
 const APIError = require("../../utils/APIError");
+const asyncHandler = require("express-async-handler");
 
-const createProduct = async (req) => {
-  try {
-    req.body.slug = slugify(req.body.title);
-    const product = await Product.create(req.body);
-    // Populate the product with category, subCategory and brand data
-    const populatedProduct = await Product.findById(product._id).populate([
-      { path: "category", select: "name" },
-      { path: "subCategory", select: "name" },
-      { path: "brand", select: "name" },
-    ]);
-    return {
-      data: populatedProduct,
-    };
-  } catch (error) {
-    if (error instanceof APIError) {
-      throw error;
-    }
-    throw new APIError(error.message, 500);
+
+const createProduct = asyncHandler(async (req) => {
+  req.body.slug = slugify(req.body.title);
+  const product = await Product.create(req.body);
+  const populatedProduct = await Product.findById(product._id).populate([
+    { path: "category", select: "name" },
+    { path: "subCategory", select: "name" },
+    { path: "brand", select: "name" },
+  ]);
+  return {
+    data: populatedProduct,
+  };
+});
+
+const getProduct = asyncHandler(async (idFromController) => {
+  const product = await Product.findById(idFromController).populate([
+    { path: "category", select: "name" },
+    { path: "subCategory", select: "name" },
+    { path: "brand", select: "name" },
+  ]);
+  if (!product) {
+    throw new APIError("Product not found", 404);
   }
-};
+  return {
+    data: product,
+  };
+});
 
-const getProduct = async (idFromController) => {
-  try {
-    if (!idFromController) {
-      throw new APIError("Product id is required", 400);
+const getProducts = asyncHandler(async (req) => {
+  const APIFeatures = require("../../utils/APIFeatures");
+  
+  // Create query with APIFeatures class
+  const features = new APIFeatures(Product.find(), req.query)
+    .filter()
+    .sort()
+    .limitFields()
+    .search(['title', 'description'])
+    .paginate();
+  
+  // Add necessary populate options
+  features.query.populate([
+    { path: "category", select: "name" },
+    { path: "subCategory", select: "name" },
+    { path: "brand", select: "name" },
+  ]);
+  
+  // Execute query
+  const products = await features.query;
+  
+  // Get total count for pagination
+  const count = await Product.countDocuments(features.query.getFilter());
+  
+  // Return formatted response
+  return features.formatResponse(products, count);
+});
+
+const updateProduct = asyncHandler(async (idFromController, req) => {
+  const product = await Product.findByIdAndUpdate(
+    { _id: idFromController },
+    req.body,
+    {
+      new: true,
     }
-    const product = await Product.findById(idFromController).populate([
-      { path: "category", select: "name" },
-      { path: "subCategory", select: "name" },
-      { path: "brand", select: "name" },
-    ]);
-    if (!product) {
-      throw new APIError("Product not found", 404);
-    }
-    return {
-      data: product,
-    };
-  } catch (error) {
-    if (error instanceof APIError) {
-      throw error;
-    }
-    throw new APIError(error.message, 500);
+  ).populate([
+    { path: "category", select: "name" },
+    { path: "subCategory", select: "name" },
+    { path: "brand", select: "name" },
+  ]);
+  if (!product) {
+    throw new APIError("Product not found", 404);
   }
-};
+  return {
+    data: product,
+  };
+});
 
-const getProducts = async (req) => {
-  try {
-    const {
-      parseReqQueryParamsToMatchMongooStructure,
-      getPaginationParams,
-      formatPaginatedResponse,
-    } = require("../../utils/queryUtils");
-    const excludeParams = ["page", "limit", "sort", "fields"];
-    const parsedQuery = parseReqQueryParamsToMatchMongooStructure(
-      req.query,
-      excludeParams
-    );
-    const paginationParams = getPaginationParams(req.query);
-    const { skip, limit } = paginationParams;
-    let mongooseQuery = Product.find(parsedQuery)
-      .skip(skip)
-      .limit(limit)
-      .populate([
-        { path: "category", select: "name" },
-        { path: "subCategory", select: "name" },
-        { path: "brand", select: "name" },
-      ]);
-    if (req.query.sort) {
-      const sortBy = req.query.sort.split(",").join(" ");
-      mongooseQuery = mongooseQuery.sort(sortBy);
-    } else {
-      mongooseQuery = mongooseQuery.sort("-createdAt");
-    }
-
-    if (req.query.fields) {
-      const fields = req.query.fields.split(",").join(" ");
-      mongooseQuery = mongooseQuery.select(fields);
-    }
-
-    const products = await mongooseQuery;
-    const count = await Product.countDocuments(parsedQuery);
-    return formatPaginatedResponse(products, count, paginationParams);
-  } catch (error) {
-    if (error instanceof APIError) {
-      throw error;
-    }
-    throw new APIError(error.message, 500);
+const deleteProduct = asyncHandler(async (idFromController) => {
+  const product = await Product.findByIdAndDelete(idFromController);
+  if (!product) {
+    throw new APIError("Product not found", 404);
   }
-};
-
-const updateProduct = async (idFromController, req) => {
-  try {
-    if (!idFromController) {
-      throw new APIError("Product id is required", 400);
-    }
-    const product = await Product.findByIdAndUpdate(
-      { _id: idFromController },
-      req.body,
-      {
-        new: true,
-      }
-    ).populate([
-      { path: "category", select: "name" },
-      { path: "subCategory", select: "name" },
-      { path: "brand", select: "name" },
-    ]);
-    if (!product) {
-      throw new APIError("Product not found", 404);
-    }
-    return {
-      data: product,
-    };
-  } catch (error) {
-    if (error instanceof APIError) {
-      throw error;
-    }
-    throw new APIError(error.message, 500);
-  }
-};
-
-const deleteProduct = async (idFromController) => {
-  try {
-    if (!idFromController) {
-      throw new APIError("Product id is required", 400);
-    }
-    const product = await Product.findByIdAndDelete(idFromController);
-    if (!product) {
-      throw new APIError("Product not found", 404);
-    }
-    return {
-      message: "Product deleted successfully",
-    };
-  } catch (error) {
-    if (error instanceof APIError) {
-      throw error;
-    }
-    throw new APIError(error.message, 500);
-  }
-};
+  return {
+    message: "Product deleted successfully",
+  };
+});
 
 module.exports = {
   createProduct,
