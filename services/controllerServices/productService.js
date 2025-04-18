@@ -54,7 +54,7 @@ const getProducts = async (req) => {
       getPaginationParams,
       formatPaginatedResponse,
     } = require("../../utils/queryUtils");
-    const excludeParams = ["page", "limit", "sort"];
+    const excludeParams = ["page", "limit", "sort", "fields"];
     const parsedQuery = parseReqQueryParamsToMatchMongooStructure(
       req.query,
       excludeParams
@@ -75,6 +75,12 @@ const getProducts = async (req) => {
     } else {
       mongooseQuery = mongooseQuery.sort("-createdAt");
     }
+
+    if (req.query.fields) {
+      const fields = req.query.fields.split(",").join(" ");
+      mongooseQuery = mongooseQuery.select(fields);
+    }
+
     const products = await mongooseQuery;
     const count = await Product.countDocuments(parsedQuery);
     return formatPaginatedResponse(products, count, paginationParams);
