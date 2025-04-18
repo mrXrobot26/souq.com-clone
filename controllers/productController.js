@@ -25,9 +25,7 @@ const getProductController = AsyncHandler(async (req, res) => {
 });
 
 const getProductsController = AsyncHandler(async (req, res) => {
-  const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 10;
-  const products = await getProducts(page, limit, req);
+  const products = await getProducts(req);
   APIResponse.send(
     res,
     APIResponse.success(products, 200, "Products retrieved successfully")

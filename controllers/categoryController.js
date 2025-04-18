@@ -22,9 +22,7 @@ const getCategoryByIdController = asyncHandler(async (req, res) => {
 // @route  GET /api/v1/categories
 // @access public
 const getCategoriesController = asyncHandler(async (req, res) => {
-  const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 10;
-  const result = await getCategories(page, limit);
+  const result = await getCategories(req);
 
   const responseData = {
     results: result.results,

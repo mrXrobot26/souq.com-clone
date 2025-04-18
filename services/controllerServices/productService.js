@@ -47,7 +47,7 @@ const getProduct = async (idFromController) => {
   }
 };
 
-const getProducts = async (page = 1, limit = 10, req) => {
+const getProducts = async (req) => {
   try {
     //1-filltring
     const queryStringObj = { ...req.query };
@@ -58,6 +58,8 @@ const getProducts = async (page = 1, limit = 10, req) => {
       }
     });
     //2- pagination
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
     // build query =>
     /**

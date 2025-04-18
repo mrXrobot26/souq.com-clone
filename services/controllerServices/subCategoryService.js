@@ -25,10 +25,11 @@ const getSpacificSubCategory = async (subCategoryIdFromController) => {
 };
 
 const getSpacificSubCategories = async (
-  page = 1,
-  limit = 10,
+  req,
   categoryIdFromController = null
 ) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
   try {
     const skip = (page - 1) * limit;
     /**
@@ -110,28 +111,34 @@ const createSubCategory = async (
   }
 };
 
-const updateSubCategory = async (idFromController, nameFromController, categoryIdFromController) => {
+const updateSubCategory = async (
+  idFromController,
+  nameFromController,
+  categoryIdFromController
+) => {
   try {
     if (!nameFromController) {
       throw new APIError("SubCategory name is required", 400);
     }
 
-    const subCategoryFromDb = await subCategory.findOneAndUpdate(
-      { _id: idFromController },
-      { 
-        name: nameFromController, 
-        slug: slugify(nameFromController),
-        category: categoryIdFromController
-      },
-      { new: true, runValidators: true }
-    ).populate("category");
+    const subCategoryFromDb = await subCategory
+      .findOneAndUpdate(
+        { _id: idFromController },
+        {
+          name: nameFromController,
+          slug: slugify(nameFromController),
+          category: categoryIdFromController,
+        },
+        { new: true, runValidators: true }
+      )
+      .populate("category");
 
     if (!subCategoryFromDb) {
       throw new APIError("SubCategory not found", 404);
     }
 
     return {
-      data: subCategoryFromDb
+      data: subCategoryFromDb,
     };
   } catch (error) {
     if (error.code === 11000) {
@@ -149,14 +156,15 @@ const updateSubCategory = async (idFromController, nameFromController, categoryI
 
 const deleteSubCategory = async (idFromController) => {
   try {
-    const subCategoryFromDb = await subCategory.findByIdAndDelete(idFromController);
+    const subCategoryFromDb =
+      await subCategory.findByIdAndDelete(idFromController);
 
     if (!subCategoryFromDb) {
       throw new APIError("SubCategory not found", 404);
     }
 
     return {
-      message: "SubCategory deleted successfully"
+      message: "SubCategory deleted successfully",
     };
   } catch (error) {
     if (error instanceof APIError) {
@@ -168,7 +176,6 @@ const deleteSubCategory = async (idFromController) => {
     );
   }
 };
-
 
 module.exports = {
   getSpacificSubCategory,

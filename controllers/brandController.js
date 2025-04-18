@@ -23,9 +23,7 @@ const getBrandController = asyncHandler(async (req, res) => {
 });
 
 const getBrandsController = asyncHandler(async (req, res) => {
-  const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 10;
-  const brands = await getBrands(page, limit);
+  const brands = await getBrands(req);
   APIResponse.send(res, APIResponse.success(brands));
 });
 const updateBrandController = asyncHandler(async (req, res) => {

@@ -16,9 +16,7 @@ const getSpacificSubCategoryController = AsyncHandler(async (req, res) => {
 
 const getSpacificSubCategoriesController = AsyncHandler(async (req, res) => {
   const { categoryId } = req.params;
-  const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 10;
-  const result = await getSpacificSubCategories(page, limit, categoryId);
+  const result = await getSpacificSubCategories(req, categoryId);
   const responseData = {
     results: result.results,
     totalCount: result.totalCount,
@@ -31,10 +29,13 @@ const getSpacificSubCategoriesController = AsyncHandler(async (req, res) => {
 
 const createSubCategoryController = AsyncHandler(async (req, res) => {
   const name = req.body.name;
-  const {categoryId} = req.params;
+  const { categoryId } = req.params;
 
   const result = await createSubCategory(name, categoryId);
-  APIResponse.send(res, APIResponse.success(result.data, 201, 'SubCategory created successfully'))
+  APIResponse.send(
+    res,
+    APIResponse.success(result.data, 201, "SubCategory created successfully")
+  );
 });
 
 const updateSubCategoryController = AsyncHandler(async (req, res) => {
@@ -42,14 +43,18 @@ const updateSubCategoryController = AsyncHandler(async (req, res) => {
   const { name, categoryId } = req.body;
 
   const result = await updateSubCategory(id, name, categoryId);
-  APIResponse.send(res,APIResponse.success(result.data,200, "SubCategory updated successfully"))
-
+  APIResponse.send(
+    res,
+    APIResponse.success(result.data, 200, "SubCategory updated successfully")
+  );
 });
 
 const deleteSubCategoryController = AsyncHandler(async (req, res) => {
   const { id } = req.params;
   await deleteSubCategory(id);
-  return APIResponse.send(res,APIResponse.success(null, 200, "SubCategory deleted successfully")
+  return APIResponse.send(
+    res,
+    APIResponse.success(null, 200, "SubCategory deleted successfully")
   );
 });
 
