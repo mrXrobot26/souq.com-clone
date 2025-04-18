@@ -49,33 +49,26 @@ const getProduct = async (idFromController) => {
 
 const getProducts = async (req) => {
   try {
-    //1-filltring
-    const queryStringObj = { ...req.query };
-    const excludeParams = ["page", "limit"];
-    Object.keys(queryStringObj).forEach((key) => {
-      if (excludeParams.includes(key)) {
-        delete queryStringObj[key];
-      }
-    });
-    //2- pagination
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
-    const skip = (page - 1) * limit;
-    // build query =>
-    /**
-     * Builds a Mongoose query to fetch products with pagination and populated references
-     * Building the query first before execution allows for:
-     * - Query optimization and reusability
-     * - Ability to chain additional query methods
-     * - Deferred execution until needed
-     * - Better memory management for large datasets
-     * @param {Object} queryStringObj - Filter conditions for products
-     * @param {number} skip - Number of documents to skip for pagination
-     * @param {number} limit - Maximum number of documents to return
-     * @returns {mongoose.Query} Mongoose query that will fetch products with populated category, subCategory and brand names
-     */
+    // Import the query utilities
+    const {
+      parseQueryParamsToMatchMongooStructure,
+      getPaginationParams,
+      formatPaginatedResponse,
+    } = require("../../utils/queryUtils");
 
-    const mongooseQuery = Product.find(queryStringObj)
+    // 1. Parse query parameters for filtering
+    const excludeParams = ["page", "limit"];
+    const parsedQuery = parseQueryParamsToMatchMongooStructure(
+      req.query,
+      excludeParams
+    );
+
+    // 2. Get pagination parameters
+    const paginationParams = getPaginationParams(req.query);
+    const { skip, limit } = paginationParams;
+
+    // 3. Build and execute query
+    const mongooseQuery = Product.find(parsedQuery)
       .skip(skip)
       .limit(limit)
       .populate([
@@ -83,17 +76,12 @@ const getProducts = async (req) => {
         { path: "subCategory", select: "name" },
         { path: "brand", select: "name" },
       ]);
-    // execut query
-    const products = await mongooseQuery;
 
-    const count = await Product.countDocuments();
-    return {
-      results: products.length,
-      totalCount: count,
-      totalPages: Math.ceil(count / limit),
-      currentPage: page,
-      data: products,
-    };
+    const products = await mongooseQuery;
+    const count = await Product.countDocuments(parsedQuery);
+
+    // 4. Format the response with pagination metadata
+    return formatPaginatedResponse(products, count, paginationParams);
   } catch (error) {
     if (error instanceof APIError) {
       throw error;
