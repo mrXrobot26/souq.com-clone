@@ -49,26 +49,19 @@ const getProduct = async (idFromController) => {
 
 const getProducts = async (req) => {
   try {
-    // Import the query utilities
     const {
-      parseQueryParamsToMatchMongooStructure,
+      parseReqQueryParamsToMatchMongooStructure,
       getPaginationParams,
       formatPaginatedResponse,
     } = require("../../utils/queryUtils");
-
-    // 1. Parse query parameters for filtering
-    const excludeParams = ["page", "limit"];
-    const parsedQuery = parseQueryParamsToMatchMongooStructure(
+    const excludeParams = ["page", "limit", "sort"];
+    const parsedQuery = parseReqQueryParamsToMatchMongooStructure(
       req.query,
       excludeParams
     );
-
-    // 2. Get pagination parameters
     const paginationParams = getPaginationParams(req.query);
     const { skip, limit } = paginationParams;
-
-    // 3. Build and execute query
-    const mongooseQuery = Product.find(parsedQuery)
+    let mongooseQuery = Product.find(parsedQuery)
       .skip(skip)
       .limit(limit)
       .populate([
@@ -76,11 +69,14 @@ const getProducts = async (req) => {
         { path: "subCategory", select: "name" },
         { path: "brand", select: "name" },
       ]);
-
+    if (req.query.sort) {
+      const sortBy = req.query.sort.split(",").join(" ");
+      mongooseQuery = mongooseQuery.sort(sortBy);
+    } else {
+      mongooseQuery = mongooseQuery.sort("-createdAt");
+    }
     const products = await mongooseQuery;
     const count = await Product.countDocuments(parsedQuery);
-
-    // 4. Format the response with pagination metadata
     return formatPaginatedResponse(products, count, paginationParams);
   } catch (error) {
     if (error instanceof APIError) {
