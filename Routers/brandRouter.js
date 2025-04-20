@@ -10,13 +10,31 @@ const {
 const {
   validateBrandId,
   validateBrand,
-  validatePagination
+  validatePagination,
 } = require("../utils/validator/brandValidator");
 
-router.post("/", validateBrand, createBrandController);
+const {
+  uploadBrandImage,
+  processBrandImage,
+} = require("../services/controllerServices/brandService");
+
+router.post(
+  "/",
+  uploadBrandImage,
+  processBrandImage,
+  validateBrand,
+  createBrandController
+);
 router.get("/:id", validateBrandId, getBrandController);
 router.get("/", validatePagination, getBrandsController);
-router.put("/:id", validateBrandId, validateBrand, updateBrandController);
+router.put(
+  "/:id",
+  uploadBrandImage,
+  processBrandImage,
+  validateBrandId,
+  validateBrand,
+  updateBrandController
+);
 router.delete("/:id", validateBrandId, deleteBrandController);
 
 module.exports = router;

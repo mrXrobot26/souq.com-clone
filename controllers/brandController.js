@@ -9,8 +9,7 @@ const asyncHandler = require("express-async-handler");
 const APIResponse = require("../utils/APIResponse");
 
 const createBrandController = asyncHandler(async (req, res) => {
-  const name = req.body.name;
-  const brand = await createBrand(name);
+  const brand = await createBrand(req.body);
   APIResponse.send(
     res,
     APIResponse.success(brand, 201, "Brand created successfully")
@@ -28,9 +27,7 @@ const getBrandsController = asyncHandler(async (req, res) => {
 });
 const updateBrandController = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const { name } = req.body;
-
-  const brand = await updateBrand(id, name);
+  const brand = await updateBrand(id, req.body);
   APIResponse.send(
     res,
     APIResponse.success(brand, 200, "Brand updated successfully")
