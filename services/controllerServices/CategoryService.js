@@ -4,6 +4,7 @@ const asyncHandler = require("express-async-handler");
 const Factory = require("../../utils/factoryHandler");
 const multer = require("multer");
 const { v4: uuid } = require("uuid");
+const APIError = require("../../utils/APIError");
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -16,8 +17,14 @@ const storage = multer.diskStorage({
     cb(null, name);
   },
 });
-
-const upload = multer({ storage: storage });
+const multerFilter = function (_, file, cb) {
+    if(file.mimetype.startsWith("image")){
+      cb(null, true)
+    }else{
+      cb(new APIError('Only image files are allowed',400), false)
+    }
+};
+const upload = multer({ storage: storage, fileFilter: multerFilter });
 
 const getCategoryById = asyncHandler(async (id) => {
   return await Factory.getOne(Category, "Category")(id);
