@@ -12,8 +12,7 @@ const APIFeatures = require("./APIFeatures");
  * @param {String} modelName - Name of the model for error messages
  * @returns {Function} - Async handler function that deletes a document
  */
-exports.deleteOne = (Model, modelName = "Document") =>
-  asyncHandler(async (id) => {
+exports.deleteOne = (Model, modelName = "Document") => asyncHandler(async (id) => {
     const document = await Model.findByIdAndDelete(id);
 
     if (!document) {
@@ -31,8 +30,7 @@ exports.deleteOne = (Model, modelName = "Document") =>
  * @param {String} modelName - Name of the model for error messages
  * @returns {Function} - Async handler function that deletes multiple documents
  */
-exports.deleteMany = (Model, modelName = "Documents") =>
-  asyncHandler(async (filter = {}) => {
+exports.deleteMany = (Model, modelName = "Documents") => asyncHandler(async (filter = {}) => {
     const result = await Model.deleteMany(filter);
 
     return {
@@ -47,8 +45,7 @@ exports.deleteMany = (Model, modelName = "Documents") =>
  * @param {Array} populateOptions - Array of populate options
  * @returns {Function} - Async handler function that gets a document
  */
-exports.getOne = (Model, modelName = "Document", populateOptions = []) =>
-  asyncHandler(async (id) => {
+exports.getOne = (Model, modelName = "Document", populateOptions = []) => asyncHandler(async (id) => {
     let query = Model.findById(id);
 
     if (populateOptions.length > 0) {
@@ -75,8 +72,7 @@ exports.getOne = (Model, modelName = "Document", populateOptions = []) =>
  * @param {Array} populateOptions - Array of populate options
  * @returns {Function} - Async handler function that gets documents
  */
-exports.getAll = (Model, searchFields = ["name"], populateOptions = []) =>
-  asyncHandler(async (req) => {
+exports.getAll = (Model, searchFields = ["name"], populateOptions = []) => asyncHandler(async (req) => {
     const features = new APIFeatures(Model.find(), req.query)
       .filter()
       .sort()
@@ -106,8 +102,7 @@ exports.getAll = (Model, searchFields = ["name"], populateOptions = []) =>
  * @param {Array} populateOptions - Array of populate options
  * @returns {Function} - Async handler function that creates a document
  */
-exports.createOne = (Model, populateOptions = []) =>
-  asyncHandler(async (data) => {
+exports.createOne = (Model, populateOptions = []) => asyncHandler(async (data) => {
     const document = await Model.create(data);
 
     let populatedDocument = document;
@@ -134,8 +129,7 @@ exports.createOne = (Model, populateOptions = []) =>
  * @param {Array} populateOptions - Array of populate options
  * @returns {Function} - Async handler function that updates a document
  */
-exports.updateOne = (Model, modelName = "Document", populateOptions = []) =>
-  asyncHandler(async (id, data) => {
+exports.updateOne = (Model, modelName = "Document", populateOptions = []) => asyncHandler(async (id, data) => {
     let query = Model.findByIdAndUpdate(id, data, {
       new: true,
       runValidators: true,

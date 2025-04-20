@@ -13,27 +13,32 @@ const {
   updateCategoryController,
   deleteCategoryController,
 } = require("../controllers/categoryController");
-
+const multer = require("multer");
+const upload = multer({ dest: "uploads/category" });
 router.use("/:categoryId/subcategories", subcategoriesRoute);
 
-// Get category by ID
 router.get("/:id", validateMongoId, getCategoryByIdController);
 
-// Update category
 router.put(
   "/:id",
   [...validateMongoId, ...validateCategory],
   updateCategoryController
 );
 
-// Delete category
 router.delete("/:id", validateMongoId, deleteCategoryController);
 
-// Get all categories
 router.get("/", validatePagination, getCategoriesController);
 
-// Create new category
-router.post("/", validateCategory, createCategoryController);
+router.post(
+  "/",
+  upload.single("image"),
+  (req, resizeBy, next) => {
+    console.log(req.file);
+    next();
+  },
+  validateCategory,
+  createCategoryController
+);
 
 // Note: If we're passing multiple middleware arrays (e.g. validateMongoId, validateCategory),
 // we must use the spread operator [...arr1, ...arr2] to flatten them into a single array.
