@@ -38,6 +38,5 @@ const validatePagination = [
 module.exports = {
     validateMongoId,
     validateCategory,
-    
     validatePagination
 };

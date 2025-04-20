@@ -13,8 +13,9 @@ const {
   updateCategoryController,
   deleteCategoryController,
 } = require("../controllers/categoryController");
-const multer = require("multer");
-const upload = multer({ dest: "uploads/category" });
+
+const { upload } = require("../services/controllerServices/CategoryService");
+
 router.use("/:categoryId/subcategories", subcategoriesRoute);
 
 router.get("/:id", validateMongoId, getCategoryByIdController);
@@ -32,10 +33,6 @@ router.get("/", validatePagination, getCategoriesController);
 router.post(
   "/",
   upload.single("image"),
-  (req, resizeBy, next) => {
-    console.log(req.file);
-    next();
-  },
   validateCategory,
   createCategoryController
 );

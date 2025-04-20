@@ -2,6 +2,22 @@ const Category = require("../../models/categoryModel");
 const slugify = require("slugify");
 const asyncHandler = require("express-async-handler");
 const Factory = require("../../utils/factoryHandler");
+const multer = require("multer");
+const { v4: uuid } = require("uuid");
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "uploads/category");
+  },
+  filename: function (req, file, cb) {
+    const ext = file.mimetype.split("/")[1];
+    // category-uuid-datetime.now().png
+    const name = `category-${uuid()}-${Date.now()}.${ext}`;
+    cb(null, name);
+  },
+});
+
+const upload = multer({ storage: storage });
 
 const getCategoryById = asyncHandler(async (id) => {
   return await Factory.getOne(Category, "Category")(id);
@@ -39,4 +55,5 @@ module.exports = {
   createCategory,
   updateCategory,
   deleteCategoryById,
+  upload,
 };
