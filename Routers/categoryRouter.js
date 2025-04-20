@@ -14,7 +14,10 @@ const {
   deleteCategoryController,
 } = require("../controllers/categoryController");
 
-const { upload } = require("../services/controllerServices/CategoryService");
+const {
+  uploadCategoryImage,
+  resizeImage,
+} = require("../services/controllerServices/CategoryService");
 
 router.use("/:categoryId/subcategories", subcategoriesRoute);
 
@@ -22,6 +25,8 @@ router.get("/:id", validateMongoId, getCategoryByIdController);
 
 router.put(
   "/:id",
+  uploadCategoryImage,
+  resizeImage,
   [...validateMongoId, ...validateCategory],
   updateCategoryController
 );
@@ -32,7 +37,8 @@ router.get("/", validatePagination, getCategoriesController);
 
 router.post(
   "/",
-  upload.single("image"),
+  uploadCategoryImage,
+  resizeImage,
   validateCategory,
   createCategoryController
 );

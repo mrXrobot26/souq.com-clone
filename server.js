@@ -20,7 +20,7 @@ dbConnect();
 
 // Middleware
 app.use(express.json());
-
+app.use(express.static(__dirname + "/uploads"));
 if (process.env.NODE_ENV === "development") {
   console.log("======================================");
   console.log(`Mode: ${process.env.NODE_ENV}`);

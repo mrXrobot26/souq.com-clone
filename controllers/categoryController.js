@@ -39,8 +39,7 @@ const getCategoriesController = asyncHandler(async (req, res) => {
 // @route  POST /api/v1/categories
 // @access public
 const createCategoryController = asyncHandler(async (req, res) => {
-  const { name } = req.body;
-  const category = await createCategory(name);
+  const category = await createCategory(req.body);
 
   APIResponse.send(
     res,
@@ -53,8 +52,7 @@ const createCategoryController = asyncHandler(async (req, res) => {
 // @access Private
 const updateCategoryController = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const { name } = req.body;
-  const category = await updateCategory(id, name);
+  const category = await updateCategory(id, req.body);
 
   APIResponse.send(
     res,
