@@ -2,47 +2,26 @@ const Category = require("../../models/categoryModel");
 const slugify = require("slugify");
 const asyncHandler = require("express-async-handler");
 const Factory = require("../../utils/factoryHandler");
-const multer = require("multer");
-const sharp = require("sharp");
-const { v4: uuid } = require("uuid");
-const APIError = require("../../utils/APIError");
+const {
+  createUpload,
+  resizeImage,
+} = require("../../middlewares/uploadMiddleware");
 
-// 1- diskStorage
-// const storage = multer.diskStorage({
-//   destination: function (req, file, cb) {
-//     cb(null, "uploads/category");
-//   },
-//   filename: function (req, file, cb) {
-//     const ext = file.mimetype.split("/")[1];
-//     // category-uuid-datetime.now().png
-//     const name = `category-${uuid()}-${Date.now()}.${ext}`;
-//     cb(null, name);
-//   },
-// });
+// Create upload middleware with memory storage
+const uploadCategoryImage = createUpload({
+  storageType: "memory",
+  destination: "uploads/category",
+  fieldName: "image",
+});
 
-// 2- memeoryStorage
-const storage = multer.memoryStorage();
-
-const multerFilter = function (_, file, cb) {
-  if (file.mimetype.startsWith("image")) {
-    cb(null, true);
-  } else {
-    cb(new APIError("Only image files are allowed", 400), false);
-  }
-};
-const upload = multer({ storage: storage, fileFilter: multerFilter });
-const uploadCategoryImage = upload.single("image");
-
-const resizeImage = asyncHandler(async (req, res, next) => {
-  const fileName = `category-${uuid()}-${Date.now()}.jpeg`;
-  sharp(req.file.buffer)
-    .resize(600, 600)
-    .toFormat("jpeg")
-    .jpeg({ quality: 95 })
-    .toFile(`uploads/category/${fileName}`);
-
-  req.body.image = fileName;
-  next();
+// Configure image processing middleware
+const processCategoryImage = resizeImage({
+  destination: "uploads/category",
+  width: 600,
+  height: 600,
+  format: "jpeg",
+  quality: 95,
+  fileNamePrefix: "category",
 });
 
 const getCategoryById = asyncHandler(async (id) => {
@@ -89,5 +68,5 @@ module.exports = {
   updateCategory,
   deleteCategoryById,
   uploadCategoryImage,
-  resizeImage,
+  processCategoryImage,
 };
