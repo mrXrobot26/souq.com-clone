@@ -121,12 +121,17 @@ const processImage = uploadMiddleware.resizeImage({
 
 // Use in route
 router.post("/products", upload, processImage, createProduct);
+  "/products/multiple",
+  uploadMultiple,
+  processMultipleImages,
+  createProduct
+);
 ```
-
-**Configuration Options**:
-
-- `storageType`: Type of storage ('disk' or 'memory')
-- `destination`: Destination folder for processed images
+- `height`: Target height for resized images
+- `format`: Output format (jpeg, png, etc)
+- `quality`: Image quality (1-100)
+- `fileNamePrefix`: Prefix for the output filename
+- `bodyField`: Field name to store image filenames in req.body (for multiple uploads)
 - `fieldName`: Name of the form field for the file
 - `width`: Target width for resized image
 - `height`: Target height for resized image

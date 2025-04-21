@@ -14,10 +14,21 @@ const {
   validateProductId,
 } = require("../utils/validator/productValidator");
 
+const {
+  resizeProductImages,
+  uploadProductImages,
+} = require("../services/controllerServices/productService");
+
 // @desc   Create a new product
 // @route  POST /api/v1/products/createProduct
 // @access private
-router.post("/createProduct", validateProduct, createProductController);
+router.post(
+  "/createProduct",
+  uploadProductImages,
+  resizeProductImages,
+  validateProduct,
+  createProductController
+);
 
 // @desc   Get a product by ID
 // @route  GET /api/v1/products/:id
