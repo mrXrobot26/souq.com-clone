@@ -23,6 +23,20 @@ const brandSchema = Schema(
     timestamps: true,
   }
 );
-//                                 when i do ref i use 'Brand'
+
+const processImageURL = (doc) => {
+  if (doc.image) {
+    doc.image = `${process.env.BASE_URL}/brand/${doc.image}`;
+  }
+};
+
+brandSchema.post("init", (doc) => {
+  processImageURL(doc);
+});
+
+brandSchema.post("save", (doc) => {
+  processImageURL(doc);
+});
+
 const brandModel = mongoose.model("Brand", brandSchema);
 module.exports = brandModel;
