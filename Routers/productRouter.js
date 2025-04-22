@@ -15,7 +15,7 @@ const {
 } = require("../utils/validator/productValidator");
 
 const {
-  resizeProductImages,
+  processProductImages,
   uploadProductImages,
 } = require("../services/controllerServices/productService");
 
@@ -25,7 +25,7 @@ const {
 router.post(
   "/createProduct",
   uploadProductImages,
-  resizeProductImages,
+  processProductImages,
   validateProduct,
   createProductController
 );
@@ -45,6 +45,8 @@ router.get("/", validatePagination, getProductsController);
 // @access private
 router.put(
   "/:id",
+  uploadProductImages,
+  processProductImages,
   [...validateProduct, ...validateProductId],
   updateProductController
 );

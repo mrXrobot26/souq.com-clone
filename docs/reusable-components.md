@@ -99,18 +99,62 @@ const deleteProduct = factoryHandler.deleteOne(Product, "Product");
 - Support for both disk and memory storage
 - Automatic file naming with UUID
 - Image resizing and format conversion
+- Support for multiple file uploads (same field or different fields)
+- Configurable image processing per field
 
-**Implementation**:
+#### createUpload Function
+
+**Parameters**:
+
+- `storageType`: Type of storage ('disk' or 'memory', default: 'memory')
+- `destination`: Destination folder for disk storage (default: 'uploads')
+- `field`: Name of the form field for the file or fields configuration for multiple uploads (default: 'image')
+- `fieldName`: (Legacy parameter) Alternative to `field` for backward compatibility
+- `multiple`: Whether to handle multiple files with the same field name (default: false)
+
+**Usage Examples**:
 
 ```javascript
-// Example: Create an upload middleware for product images
-const upload = uploadMiddleware.createUpload({
+// Single file upload
+const uploadSingle = createUpload({
   storageType: "memory",
-  fieldName: "productImage",
+  field: "image",
 });
 
-// Example: Add image processing middleware
-const processImage = uploadMiddleware.resizeImage({
+// Multiple files with the same field name
+const uploadMultiple = createUpload({
+  storageType: "memory",
+  field: "images",
+  multiple: true,
+});
+
+// Multiple fields with different configurations
+const uploadProductImages = createUpload({
+  storageType: "memory",
+  field: [
+    { name: "imageCover", maxCount: 1 },
+    { name: "images", maxCount: 5 },
+  ],
+});
+```
+
+#### resizeImage Function
+
+**Parameters**:
+
+- `destination`: Destination folder for processed images (default: 'uploads')
+- `width`: Target width for resized images (default: 600)
+- `height`: Target height for resized images (default: 600)
+- `format`: Output format (jpeg, png, etc.) (default: 'jpeg')
+- `quality`: Image quality (1-100) (default: 95)
+- `fileNamePrefix`: Prefix for the output filename (default: 'image')
+- `fields`: Configuration for multiple fields processing (default: null)
+
+**Usage Examples**:
+
+```javascript
+// Single image processing
+const processSingleImage = resizeImage({
   destination: "uploads/products",
   width: 800,
   height: 600,
@@ -119,25 +163,46 @@ const processImage = uploadMiddleware.resizeImage({
   fileNamePrefix: "product",
 });
 
-// Use in route
-router.post("/products", upload, processImage, createProduct);
-  "/products/multiple",
-  uploadMultiple,
-  processMultipleImages,
+// Multiple fields with different configurations
+const processProductImages = resizeImage({
+  width: 2000,
+  height: 1333,
+  format: "jpeg",
+  fileNamePrefix: "products",
+  fields: {
+    imageCover: {
+      destination: "uploads/products/imageCover",
+      quality: 90,
+      fileNamePrefix: "products",
+    },
+    images: {
+      destination: "uploads/products/productImage",
+      quality: 95,
+      fileNamePrefix: "products",
+    },
+  },
+});
+```
+
+**Route Implementation**:
+
+```javascript
+// Single file upload and processing
+router.post(
+  "/categories",
+  uploadCategoryImage,
+  processCategoryImage,
+  createCategory
+);
+
+// Multiple fields with different configurations
+router.post(
+  "/products",
+  uploadProductImages,
+  processProductImages,
   createProduct
 );
 ```
-- `height`: Target height for resized images
-- `format`: Output format (jpeg, png, etc)
-- `quality`: Image quality (1-100)
-- `fileNamePrefix`: Prefix for the output filename
-- `bodyField`: Field name to store image filenames in req.body (for multiple uploads)
-- `fieldName`: Name of the form field for the file
-- `width`: Target width for resized image
-- `height`: Target height for resized image
-- `format`: Output format (jpeg, png, etc.)
-- `quality`: Image quality (1-100)
-- `fileNamePrefix`: Prefix for the output filename
 
 ### APIResponse
 

@@ -101,7 +101,7 @@ Define API endpoints and connect them to controllers:
 Process requests before they reach the controllers:
 
 - **gloablErrorHandlingMiddelware.js**: Global error handling middleware
-- **uploadMiddleware.js**: File upload and processing middleware
+- **uploadMiddleware.js**: File upload and processing middleware with support for single and multiple file uploads, image processing, and configurable storage options
 - **validationMiddleware.js**: Request validation middleware
 
 ### Utils
