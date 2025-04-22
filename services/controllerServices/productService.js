@@ -31,14 +31,19 @@ const resizeProductImages = asyncHandler(async (req, res, next) => {
       .resize(2000, 1333)
       .toFormat("jpeg")
       .jpeg({ quality: 90 })
-      .toFile(`uploads/products/${req.body.imageCover}`);
+      .toFile(`uploads/products/imageCover/${req.body.imageCover}`);
   }
   if (req.files.images) {
     req.body.images = [];
     await Promise.all(
       req.files.images.map(async (img, index) => {
         const imageName = `products-${uuid()}-${Date.now()}-${index + 1}.jpeg`;
-        await sharp(img.buffer).resize(2000, 1333);
+        await sharp(img.buffer)
+          .resize(2000, 1333)
+          .toFormat("jpeg")
+          .jpeg({ quality: 95 })
+          .toFile(`uploads/products/productImage/${imageName}`);
+
         req.body.images.push(imageName);
       })
     );
