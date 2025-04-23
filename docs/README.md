@@ -51,7 +51,7 @@ All API responses follow the JSend specification:
 - RESTful API design
 - MongoDB with Mongoose ODM
 - Express.js framework
-- MVC architecture with service layer
+- inspired by onion architecture with service layer
 - Factory pattern for CRUD operations
 - Image upload and processing
 - Error handling middleware
